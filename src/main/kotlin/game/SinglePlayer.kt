@@ -9,7 +9,7 @@ class SinglePlayer : PlayType() {
     override fun playGame(boardController: BoardController) {
         val pit: Pit
         val board: Board = boardController.board
-        pit = if (board.currentPlayer == board.player2) {
+        pit = if (board.currentPlayer == board.p2) {
             getRandomGeneratedValidPit(boardController)
         } else {
             getPlayerPit(boardController)

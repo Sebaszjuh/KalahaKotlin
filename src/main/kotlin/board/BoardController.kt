@@ -40,34 +40,34 @@ class BoardController(var board: Board) {
         
         """.trimIndent()
         val pits: MutableList<Pit> = ArrayList<Pit>()
-        val listP2: LinkedList<Pit> = LinkedList<Pit>(board.player2Board)
-        val listP1: LinkedList<Pit> = LinkedList<Pit>(board.player1Board)
+        val listP2: LinkedList<Pit> = LinkedList<Pit>(board.boardP2)
+        val listP1: LinkedList<Pit> = LinkedList<Pit>(board.boardP1)
         val bigPit: Pit = listP2.pollLast()
-        for (i in 0..<board.player2Board.size - 1) {
+        for (i in 0..<board.boardP2.size - 1) {
             pits.add(listP2.pollLast())
         }
         pits.add(bigPit)
         pits.add(listP1.pollLast())
-        for (i in 0..<board.player1Board.size - 1) {
+        for (i in 0..<board.boardP1.size - 1) {
             pits.add(listP1.pollFirst())
         }
         System.out.printf(TEMPLATE, *pits.stream().map<Any>(Pit::stonesInPit).toArray())
     }
 
     fun cleanupBoard() {
-        val p1Sum: Int = board.player1Board.stream().filter { pit ->
-            pit.ownerOfPit == board.player1
+        val p1Sum: Int = board.boardP1.stream().filter { pit ->
+            pit.ownerOfPit == board.p1
         }.mapToInt(Pit::takeStones).sum()
-        val p2Sum: Int = board.player2Board.stream().filter { pit ->
-            pit.ownerOfPit == board.player2
+        val p2Sum: Int = board.boardP2.stream().filter { pit ->
+            pit.ownerOfPit == board.p2
         }.mapToInt(Pit::takeStones).sum()
-        board.player1.bigPit!!.addStonesToPit(p1Sum)
-        board.player2.bigPit!!.addStonesToPit(p2Sum)
+        board.p1.bigPit!!.addStonesToPit(p1Sum)
+        board.p2.bigPit!!.addStonesToPit(p2Sum)
     }
 
     fun updateBoardStatusWithWinner() {
-        val p1Stones: Int = board.player1.bigPit!!.stonesInPit
-        val p2Stones: Int = board.player2.bigPit!!.stonesInPit
+        val p1Stones: Int = board.p1.bigPit!!.stonesInPit
+        val p2Stones: Int = board.p2.bigPit!!.stonesInPit
         if (p1Stones == p2Stones) {
             board.gameStatus = BoardStatus.DRAW
             return
@@ -78,8 +78,8 @@ class BoardController(var board: Board) {
     }
 
     fun updateBoardStatusIfFinished() {
-        val p1Finished = isPlayerFinished(board.player1Board)
-        val p2Finished = isPlayerFinished(board.player2Board)
+        val p1Finished = isPlayerFinished(board.boardP1)
+        val p2Finished = isPlayerFinished(board.boardP2)
         if (p1Finished || p2Finished) {
             board.gameStatus = BoardStatus.FINISHED
         }
@@ -94,7 +94,7 @@ class BoardController(var board: Board) {
         if (currentPlayer.isExtraTurn()) {
             return
         }
-        board.currentPlayer = if (currentPlayer == board.player1) board.player2 else board.player1
+        board.currentPlayer = if (currentPlayer == board.p1) board.p2 else board.p1
     }
 
 }
